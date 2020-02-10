@@ -3,8 +3,8 @@
     <div class="card">
       <div class="grid-card">
         <div class="navbar">
-          <img src="../../assets/imgs/cat.jpg" alt="">
-          <p class="name">woraphon netnim</p>
+          <img :src="require(`@/assets/imgs/${this.img}`)" alt="">
+          <p class="name">{{this.name}}</p>
         </div>
         <div class="section">
           <chatCard />
@@ -23,7 +23,8 @@
     },
     data() {
       return {
-        name: null
+        name:this.$route.query.name,
+        img:this.$route.query.img,
       }
     },
     created() {

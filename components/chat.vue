@@ -16,7 +16,7 @@
           </div> -->
           <div :class="msg.name==name?'msger chat-right':'msger chat-left'" v-for="(msg, index) in messages" :key="index">
             <div class="msg-img">
-              <img src="../assets/imgs/cat.jpg" alt="">
+              <img :src="require(`@/assets/imgs/${msg.img}`)" alt="">
             </div>
             <div class="msger-box">
               <div class="msger-label">
@@ -44,7 +44,8 @@
       return {
         message: '',
         messages: [],
-        name:this.$route.query.name
+        name:this.$route.query.name,
+        img:this.$route.query.img,
       }
     },
     mounted() {
@@ -57,7 +58,7 @@
     },
     methods: {
       sendMessage() {
-        socket.emit('sendMessage',{message :this.message,name:this.name,dateTime:this.dateNowFomat()} )
+        socket.emit('sendMessage',{message :this.message,name:this.name,img:this.img,dateTime:this.dateNowFomat()} )
         this.message = ''
       },
       dateNowFomat(){

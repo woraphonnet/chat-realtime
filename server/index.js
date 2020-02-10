@@ -1,11 +1,27 @@
 const express = require('express')
 const consola = require('consola')
 const { Nuxt, Builder } = require('nuxt')
+const path = require('path')
 const app = express()
+const multer  = require('multer')
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      cb(null, './assets/imgs')
+  },
+  filename: function (req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now()+path.extname(file.originalname))
+  }
+})
+var upload = multer({ storage: storage })
 
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
 config.dev = process.env.NODE_ENV !== 'production'
+
+app.post("/upload",upload.single('file'),(req,res)=>{
+  res.json({file:req.file})
+})
 
 async function start () {
   // Init Nuxt.js

@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="card">
-      <img src="../assets/imgs/cat.jpg" alt="">
-      <input type="text" v-model="name">
+      <imgInput v-model="imageData" style="margin: 0 0 40px 0;"/>
+      <input type="text" v-model="name" placeholder="name">
       <span v-if="error">{{this.error}}</span>
       <button @click="setUserName">create</button>
     </div>
@@ -11,12 +11,20 @@
 
 <script>
   import socket from '../plugins/socket.io'
+  import imgInput from '../components/imgInput'
   export default {
+    components:{
+      imgInput
+    },
     data() {
       return {
         name: null,
         error: null,
+        imageData:null,
       }
+    },
+    updated() {
+        console.log("ssss",this.imageData);
     },
     methods: {
       setUserName() {
@@ -24,7 +32,8 @@
         socket.on('userSet', (data) => {
           if (data.status == 'Y') {
               this.$router.push({ name: 'dashboard',query:{
-                name:this.name
+                name:this.name,
+                img:this.imageData.file.filename
               }})
           } else {
             this.name = data.username;
