@@ -2,24 +2,36 @@
   <div class="card-chat">
     <div class="head">
       <div class="flex-head">
-        <img src="../assets/imgs/cat.jpg" alt="">
         <div class="name-join">
-          test
-        </div>
-        <div class="status" style="font-size: 7px;">
-          ⚪
+          Chat Group
         </div>
       </div>
 
     </div>
     <div class="detail">
       <div class="detail-item">
-        <div class="message-list" v-for="(msg, index) in messages" :key="index">
-          {{ msg }}
+        <div class="msger-chat">
+          <!-- <div v-for="(msg, index) in messages" :key="index">
+            <p>{{ `${msg.message}   ${msg.name}`}}</p>
+          </div> -->
+          <div :class="msg.name==name?'msger chat-right':'msger chat-left'" v-for="(msg, index) in messages" :key="index">
+            <div class="msg-img">
+              <img src="../assets/imgs/cat.jpg" alt="">
+            </div>
+            <div class="msger-box">
+              <div class="msger-label">
+                <div class="msger-title">{{msg.name}}</div>
+                <div class="msger-time">{{msg.dateTime}}</div>
+              </div>
+              <div class="msger-text">
+                {{msg.message}}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="detail-item input-message">
-        <input autocomplete="off" v-model="message" placeholder="Send a message here" @keyup.enter="sendMessage"/>
+        <input autocomplete="off" v-model="message" placeholder="Enter your message..." @keyup.enter="sendMessage"/>
         <button class="btn" type="button" @click="sendMessage"><img src="../assets/imgs/send_notification_334641.png" alt="" width="25"></button>
       </div>
     </div>
@@ -32,6 +44,7 @@
       return {
         message: '',
         messages: [],
+        name:this.$route.query.name
       }
     },
     mounted() {
@@ -39,32 +52,36 @@
         this.messages.push(msg)
       })
     },
+    updated() {
+      this.scrollToEmd();
+    },
     methods: {
       sendMessage() {
-        socket.emit('sendMessage', this.message)
+        socket.emit('sendMessage',{message :this.message,name:this.name,dateTime:this.dateNowFomat()} )
         this.message = ''
+      },
+      dateNowFomat(){
+        var today = new Date();
+        var Hours = today.getHours();
+        var Minutes = today.getMinutes();
+        today = `${Hours}:${Minutes}`;
+        return today;
+      },
+      scrollToEmd() {
+          var container = this.$el.querySelector(".msger-chat");
+          container.scrollTop = container.scrollHeight;
       }
-    }
+    },
+    watch: {
+      messages(val){
+        console.log("messages :",val);
+        
+      }
+    },
   }
 
 </script>
 <style>
-  .form {}
-
-  /* input {
-    border: 0;
-    padding: 10px;
-    width: 90%;
-    margin-right: .5%;
-  } */
-
-  /* .btn {
-    width: 9%;
-    background: rgb(130, 224, 255);
-    border: none;
-    padding: 10px;
-  } */
-
   .message {
     margin-left: 50px;
   }
@@ -78,7 +95,7 @@
 
   .card-chat .head {
     background-color: #f7f8fb;
-    height: 66px;
+    height: 40px;
     border-bottom: 1px solid #e3e5ea;
   }
 
@@ -89,10 +106,11 @@
     align-items: center
   }
 
-  .flex-head img {
+  .msg-img img {
     height: 40px;
     width: 40px;
     border-radius: 50%;
+    margin: 0px 5px;
   }
 
   .name-join {
@@ -106,7 +124,6 @@
     background-color: #fff;
     display: grid;
     grid-template-rows: 8fr 1fr;
-    padding: 0 30px 12px 30px;
   }
 
   .input-message{
@@ -121,7 +138,7 @@
     padding: 0 0 0 45px;
      outline: none;
   }
-.input-message button{
+  .input-message button{
     background-color: white;
     border: none;
     border-top: 1px solid #e3e5ea;
@@ -131,5 +148,64 @@
   .input-message button:hover{
     background-color: #f4f1f1;
   }
-
+  /* chat */
+  .msger-chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0 0 0;
+    height: 349px;
+  }
+  .msger-chat::-webkit-scrollbar {
+    width: 6px;
+  }
+  .msger-chat::-webkit-scrollbar-track {
+    background: #ddd;
+  }
+  .msger-chat::-webkit-scrollbar-thumb {
+    background: #bdbdbd;
+  }
+  .msger{
+    display: flex;
+    margin: 0 0 10px 0;
+  }
+  .msger-label{
+    justify-content: space-between;
+    display: flex;
+    margin: 0 0 5px 0;
+  }
+  .msger-box{
+    padding: 10px;
+    background-color: #ececec;
+    max-width: 253px;
+  }
+  .msger-title{
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 20px 0 0;
+  }
+  .msger-time{
+    font-size: 11px;
+  }
+  .msger-text{
+    font-size: 12px;
+    word-wrap: break-word;
+  }
+   .chat-left{
+    flex-direction: row;
+  }
+  .chat-right{
+    flex-direction: row-reverse;
+  }
+  .chat-left .msger-box{
+      border-bottom-right-radius: 11px;
+      border-bottom-left-radius: 11px;
+      border-top-right-radius: 11px;
+  }
+  .chat-right .msger-box{
+      background-color: #579ffb;
+      color: #fff;
+      border-bottom-right-radius: 11px;
+      border-bottom-left-radius: 11px;
+      border-top-left-radius: 11px;
+  }
 </style>

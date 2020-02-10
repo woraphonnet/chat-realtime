@@ -1,117 +1,108 @@
 <template>
   <div class="container">
     <div class="card">
-      <div class="grid-card">
-        <div class="navbar">
-            <img src="../assets/imgs/cat.jpg" alt="">
-            <p class="name">woraphon netnim</p>
-        </div>
-        <div class="section">
-          <chatCard/>
-        </div>
-      </div>
+      <img src="../assets/imgs/cat.jpg" alt="">
+      <input type="text" v-model="name">
+      <span v-if="error">{{this.error}}</span>
+      <button @click="setUserName">create</button>
     </div>
   </div>
 </template>
 
 <script>
-import chatCard from '../components/chat'
-export default {
-  components:{
-    chatCard
-  },
-  data() {
-    return {
-      message: '',
-      messages: [],
+  import socket from '../plugins/socket.io'
+  export default {
+    data() {
+      return {
+        name: null,
+        error: null,
+      }
+    },
+    methods: {
+      setUserName() {
+        socket.emit('setUserName', this.name);
+        socket.on('userSet', (data) => {
+          if (data.status == 'Y') {
+              this.$router.push({ name: 'dashboard',query:{
+                name:this.name
+              }})
+          } else {
+            this.name = data.username;
+            this.error = 'Have username in the system';
+          }
+        })
+      }
     }
-  },
-  mounted() {
-  
-  },
-  methods: {
-   
   }
-}
+
 </script>
 
 <style scoped>
-  /* .form { 
-    background: #000; 
-    padding: 3px; 
-    position: fixed; 
-    bottom: 0; 
-    width: 100%; 
-  }
-  input { 
-    border: 0; 
-    padding: 10px; 
-    width: 90%; 
-    margin-right: .5%; 
-  }
-  .btn { 
-    width: 9%; 
-    background: rgb(130, 224, 255); 
-    border: none; 
-    padding: 10px; 
-  }
-  .message {
-    margin-left: 50px;
-  } */
- .card{
-   background-color: #fff;
-    width: 97%;
+  .card {
+    background-color: #fff;
+    width: 22rem;
     height: 33rem;
     border-radius: 13px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
- }
- .container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+  }
+
+  .container {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
     height: -webkit-fill-available;
     background-color: rgb(214, 240, 248);
- }
+  }
 
- .grid-card{
-   display: grid;
-   grid-template-columns: 1fr 4fr
- }
-
-.navbar img{
-    border-radius: 17;
-    height: 100px;
+  img {
+    width: 180px;
+    height: 180px;
     border-radius: 50%;
-    width: 100px;
-    margin: 23px 23px 5px 23px;
-}
+    border: 1px solid #6d6868;
+    margin: 0 0 24px 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
 
-.navbar{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+  input {
+    height: 30px;
+    text-align: center;
+    border-radius: 6px;
+    width: 213px;
+    margin: 0 0 17px 0;
+    border: none;
+    outline: none;
+    border: 1px solid #75bfd5;
+    font-weight: bold;
+  }
 
-.navbar P{
+  button {
+    border: 4px solid #f5ecec;
+    height: 40px;
+    width: 140px;
     font-size: 18px;
-    font-weight: bold;
-    margin: 10px 0 5px 0;
-    
-}
-.section{
-    background-color: #d6f0f894;
-    height: 33rem;
-    border-radius: 0 13px 13px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-.title{
-    margin: 22px;
     text-transform: uppercase;
-    font-size: 28px;
     font-weight: bold;
-}
+    color: #fff;
+    background-color: #75bfd5;
+    border-radius: 10px;
+    outline: none;
+  }
+
+  button:hover {
+    background-color: #03baf1;
+  }
+
+  span {
+    font-size: 12px;
+    color: red;
+    color: 0 0 0 0;
+    margin: -6px 0 15px 0;
+  }
+
 </style>
