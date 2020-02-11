@@ -18,7 +18,8 @@ $ npm run start
 # generate static project
 $ npm run generate
 ```
-# run serve socket.io 
+# run serve socket.io
+cd server 
 $ node socket.io.js
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
